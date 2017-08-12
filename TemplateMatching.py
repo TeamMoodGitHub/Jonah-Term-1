@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 
 img = cv2.imread("F:\\Work\\CvTest\\smashtest.jpg",0)
 img2 = img.copy()
-template = cv2.imread("F:\\Work\\CvTest\\fox2.png",0)
+template = cv2.imread("F:\\Work\\CvTest\\fox3.png",0)
 w,h = template.shape[::-1]
 
 methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR',
