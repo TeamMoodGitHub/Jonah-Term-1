@@ -2,9 +2,9 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-img = cv2.imread("F:\\Work\\CvTest\\Falcoshot.png",0)
+img = cv2.imread("F:\\Work\\CvTest\\images\\smashtest.jpg",0)
 img2 = img.copy()
-template = cv2.imread("F:\\Work\\CvTest\\laser.png",0)
+template = cv2.imread("F:\\Work\\CvTest\\Data\\%.png",0)
 w,h = template.shape[::-1]
 
 methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR',
