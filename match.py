@@ -46,10 +46,13 @@ for imagePath in glob.glob(args["images"] + "/*.jpg"):
 		# matching to find the template in the image
 		edged = cv2.Canny(resized, 50, 200)
 		result = cv2.matchTemplate(edged, template, cv2.TM_CCOEFF_NORMED)
-		threshold = .5
+		threshold = .3
 		loc = np.where( result >= threshold)
 		print(zip(*loc))
 		for pt in zip(*loc[::-1]):
 			cv2.rectangle(image, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
 		cv2.imwrite('res.png',image)
+		
+		
+		#run with python match.py --template %.png --images images
 		
