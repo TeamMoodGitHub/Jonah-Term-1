@@ -3,9 +3,9 @@ import numpy as np
 from matplotlib import pyplot as plt
 import imutils
 
-img_rgb = cv2.imread('F:\\Work\\CvTest\\images\\smashtest2.jpg')
+img_rgb = cv2.imread('F:\\Work\\CvTest\\images\\smashtestDark.jpg')
 img_gray= cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
-template = cv2.imread('F:\\Work\\CvTest\\Data\\%.png',0)
+template = cv2.imread('F:\\Work\\CvTest\\manualData\\%.png',0)
 #template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
 template = cv2.Canny(template, 50, 200)
 (tH, tW) = template.shape[:2]
@@ -37,18 +37,23 @@ for scale in np.linspace(0.2, 1.0, 20)[::-1]:
 			bScale = scale
 	
 
-
+print(bScale)
 #img_gray = large image that will be scaled down
 resized = imutils.resize(img_gray, width = int(img_gray.shape[1] * bScale))
 rgb_resize = imutils.resize(img_rgb, width = int(img_rgb.shape[1] * bScale))
-edged = cv2.Canny(resized, 50, 200)
+#edged = cv2.Canny(resized, 50, 200)
+ret, edged = cv2.threshold(resized,40,255,cv2.THRESH_BINARY) 
+cv2.imwrite('edged.png',edged)
+
 dataArray = ['0','1','2','3','4','5','6','7','8','9','%']
-threshold = 0.4
+#dataArray = ['%']
+threshold = 0.6 #low threhold because earlier b&w distorts curves
 for i in dataArray:
-	template=cv2.imread('F:\\Work\\CvTest\\Data\\' + i + '.png',0)
-	template = cv2.Canny(template, 50, 200)
+	template=cv2.imread('F:\\Work\\CvTest\\manualData\\' + i + '.png',0)
+	#template = cv2.Canny(template, 50, 200)
 	w, h = template.shape[::-1]
 	res = cv2.matchTemplate(edged,template, cv2.TM_CCOEFF_NORMED)
+	cv2.imwrite('edged.png',edged)
 	loc = np.where( res >= threshold)
 	for pt in zip(*loc[::-1]):
 		print(pt)
@@ -60,4 +65,5 @@ for i in dataArray:
 
 
 cv2.imshow('res.png',rgb_resize)
+cv2.imwrite('analyzed.png',rgb_resize)
 cv2.waitKey(0)
