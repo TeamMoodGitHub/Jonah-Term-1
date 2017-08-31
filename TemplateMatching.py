@@ -2,10 +2,9 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 import imutils
-img = cv2.imread("F:\\Work\\CvTest\\images\\smashtest.jpg",0)
-img = imutils.resize(img, width = int(img.shape[1] * 0.326315789474))
+img = cv2.imread("F:\\Work\\CvTest\\edged.png",0)
 img2 = img.copy()
-template = cv2.imread("F:\\Work\\CvTest\\Data\\%.png",0)
+template = cv2.imread("F:\\Work\\CvTest\\template.png",0)
 w,h = template.shape[::-1]
 
 
