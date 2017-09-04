@@ -17,10 +17,10 @@ for item in datas:
 img.putdata(newData)
 img.save('F:\\Work\\CvTest\\images\\testRed.png', "PNG")
 '''
-
-img_rgb = cv2.imread('F:\\Work\\CvTest\\images\\smashtestDark.jpg')
+img_rgb = cv2.imread('F:\\Work\\CvTest\\Jonah-term-1\\images\\smashtestDark.jpg')
+cv2.waitKey(0)
 img_gray= cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
-template = cv2.imread('F:\\Work\\CvTest\\cropData\\%.png',0)
+template = cv2.imread('F:\\Work\\CvTest\\Jonah-term-1\\cropData\\%.png',0)
 (tH, tW) = template.shape[:2]
 w, h = img_gray.shape[::-1]
 #template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
@@ -72,7 +72,7 @@ totalImages = 0
 arranged = []
 unpacked = []
 for i in dataArray:
-	template=cv2.imread('F:\\Work\\CvTest\\cropData\\' + i + '.png',0)
+	template=cv2.imread('F:\\Work\\CvTest\\Jonah-term-1\\cropData\\' + i + '.png',0)
 	ret, template = cv2.threshold(template,80,255,cv2.THRESH_BINARY)
 	
 	#template = cv2.Canny(template, 100, 200)
