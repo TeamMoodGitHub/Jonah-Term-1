@@ -17,7 +17,7 @@ for item in datas:
 img.putdata(newData)
 img.save('F:\\Work\\CvTest\\images\\testRed.png', "PNG")
 '''
-img_rgb = cv2.imread('F:\\Work\\CvTest\\Jonah-term-1\\images\\smashtestDark.jpg')
+img_rgb = cv2.imread('F:\\Work\\CvTest\\Jonah-term-1\\frames\\frame_4.jpg')
 cv2.waitKey(0)
 img_gray= cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
 template = cv2.imread('F:\\Work\\CvTest\\Jonah-term-1\\cropData\\%.png',0)
@@ -52,9 +52,16 @@ for scale in np.linspace(0.2, 1.0, 20)[::-1]:
 		if found is None or maxVal > found[0]:
 			found = (maxVal, maxLoc, r)
 			bScale = scale
-	
+(startX, startY) = (int(maxLoc[0] * r), int(maxLoc[1] * r))
+(endX, endY) = (int((maxLoc[0] + tW) * r), int((maxLoc[1] + tH) * r))
+	 
+# draw a bounding box around the detected result and display the image
+cv2.rectangle(img_rgb, (startX, startY), (endX, endY), (0, 0, 255), 2)
+cv2.imshow("Image", img_rgb)
+cv2.waitKey(0)
 
 print(bScale)
+
 #img_gray = large image that will be scaled down
 resized = imutils.resize(img_gray, width = int(img_gray.shape[1] * bScale))
 rgb_resize = imutils.resize(img_rgb, width = int(img_rgb.shape[1] * bScale))

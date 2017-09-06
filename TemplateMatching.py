@@ -2,11 +2,12 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 import imutils
-img = cv2.imread("F:\\Work\\CvTest\\edged.png",0)
+img = cv2.imread("F:\\Work\\CvTest\\Jonah-Term-1\\imageBlock.jpg",0)
 img2 = img.copy()
-template = cv2.imread("F:\\Work\\CvTest\\template.png",0)
+template = cv2.imread("F:\\Work\\CvTest\\Jonah-Term-1\\cropData\\%.png",0)
 w,h = template.shape[::-1]
-
+resized = imutils.resize(img, width = int(img.shape[1] * 0.915789473684))
+template = cv2.Canny(resized, 100, 200)
 
 methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR',
             'cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
@@ -18,7 +19,7 @@ for meth in methods:
     # Apply template Matching
     res = cv2.matchTemplate(img,template,method)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-
+	
     # If the method is TM_SQDIFF or TM_SQDIFF_NORMED, take minimum
     if method in [cv2.TM_SQDIFF, cv2.TM_SQDIFF_NORMED]:
         top_left = min_loc
