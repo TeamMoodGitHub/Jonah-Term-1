@@ -1,0 +1,175 @@
+#:kivy 1.8.0
+#:import KivyLexer kivy.extras.highlight.KivyLexer
+#:import Factory kivy.factory.Factory
+#:set PATH "None"
+# Orientation defines whether widgets are stacked (vertical)
+# or are placed side by side (horizontal)
+# padding is the space between the widgets and the
+# surrounding window
+<MenuButton@Button>:
+	size: 150, 60
+	size_hint: None, None
+	pos_hint: {'center_x': .5}
+<URLButton@Button>:
+	size_hint: 1, 1
+<URLField@TextInput>
+	id:input
+	text: "Enter URL"
+	font_size: 24
+	multiline: False
+	spacing: 20
+		
+VodCutterLayout:
+
+<VodCutterLayout>:
+	id: VodCutter
+	FloatLayout:
+	    canvas:
+			Color:
+				rgba: 1,1,1,1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		BoxLayout:
+			size_hint: None, None
+			spacing: 30
+			center: root.center_x, root.center_y- 30
+			orientation: 'vertical'
+			MenuButton:
+				text: "New VOD from URL"
+				on_press:
+					root.parent.manager.transition.direction = 'right'
+					root.parent.manager.transition.duration = 1
+					root.parent.manager.current = 'Enter_URL'
+			MenuButton:
+				text: "Open VOD from File"
+				on_press: VodCutter.getFile()
+				
+<GetVod>:
+	VodCutterLayout:
+
+<SplitVod>:
+	id: SplitScreen
+	on_pre_enter:
+		SplitScreen.displayFrame(PATH, 1)
+    BoxLayout:
+		orientation: 'vertical'
+		Image:
+			id: FrameDisplay
+			source: 
+		Slider:
+			
+<EnterURL>:
+	id: TextScreen
+	AnchorLayout:
+		size_hint_y: None
+		height: max(root.height, content.height)
+		GridLayout:
+			id: content
+			cols: 1
+			spacing: '8dp'
+			padding: '8dp'
+			size_hint: (.8, None)
+			height: self.minimum_height
+			BoxLayout:
+				size_hint_y: None
+				height: '48dp'
+				TextInput:
+					id: textField
+					multiline: False
+			BoxLayout:
+				size_hint_y: None
+				height: '48dp'
+				ProgressBar:
+					id: downloadBar
+					max: 1
+					value: 0
+			BoxLayout:
+				size_hint: None, None
+				height: '48dp'
+				width: '150dp'
+				center_x: root.center_x
+				Button:
+					text: "Submit"
+					on_press:
+						TextScreen.download_file(textField.text)
+
+				Button:
+					text: "Cancel"
+					on_press:
+						root.manager.transition.direction = 'left'
+						root.manager.transition.duration = 1
+						root.manager.current = 'Get_Vod'
+<EnterURL1>:
+	AnchorLayout:
+		size_hint_y: None
+		height: max(root.height, content.height)
+		GridLayout:
+			id: content
+			cols: 1
+			spacing: '8dp'
+			padding: '8dp'
+			size_hint: (.8, None)
+			height: self.minimum_height
+			BoxLayout:
+				size_hint_y: None
+				height: '48dp'
+
+				Label:
+					text: 'Default'
+
+				Slider:
+					id: s1
+
+				Label:
+					text: '{}'.format(s1.value)
+
+
+			BoxLayout:
+				size_hint_y: None
+				height: '48dp'
+
+				Label:
+					text: 'Stepped'
+
+				ProgressBar:
+					size_hint: None, None
+					pos_hint: {'center_x': .5}
+					spacing: 0
+					max: 100
+					value: 50
+
+				Label:
+					text: '{}'
+
+			AnchorLayout:
+				size_hint_y: None
+				height: '100dp'
+
+				GridLayout:
+					cols: 2
+					spacing: '8dp'
+					size_hint_x: None
+					width: self.minimum_width
+
+					Slider:
+						size_hint_x: None
+						width: '48dp'
+						orientation: 'vertical'
+						value: s1.value
+						on_value: s1.value = self.value
+
+					Slider:
+						size_hint_x: None
+						width: '48dp'
+						orientation: 'vertical'
+						step: 20
+						
+			
+
+					
+ 
+	
+			
+
+		 
