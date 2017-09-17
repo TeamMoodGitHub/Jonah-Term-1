@@ -50,23 +50,35 @@ VodCutterLayout:
 
 <SplitVod>:
 	id: SplitScreen
-	on_pre_enter:
-		SplitScreen.displayFrame(PATH, 1)
-    BoxLayout:
-		orientation: 'vertical'
-		Image:
-			id: FrameDisplay
-			source: 
-		Slider:
+	AnchorLayout:
+		anchor_x: 'center'
+		GridLayout:
+			cols: 1
+			BoxLayout:
+				canvas:
+					Color:
+						rgba: 0,1,1,1
+					Rectangle:
+						pos: self.pos
+						size: self.size
+				Image:
+					id: FrameDisplay
+					center_x: root.center_x
+			BoxLayout:
+				Slider:
+					min: 0
+					max: 100
+					on_touch_up:
+						SplitScreen.displayFrame(self.value)
 			
 <EnterURL>:
 	id: TextScreen
 	AnchorLayout:
 		size_hint_y: None
 		height: max(root.height, content.height)
-		GridLayout:
+		BoxLayout:
 			id: content
-			cols: 1
+			orientation: 'vertical'
 			spacing: '8dp'
 			padding: '8dp'
 			size_hint: (.8, None)
@@ -88,7 +100,7 @@ VodCutterLayout:
 				size_hint: None, None
 				height: '48dp'
 				width: '150dp'
-				center_x: root.center_x
+				pos_hint: {'center_x': .5}
 				Button:
 					text: "Submit"
 					on_press:
