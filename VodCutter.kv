@@ -1,4 +1,4 @@
-#:kivy 1.8.0
+#:kivy 1.10.0
 #:import KivyLexer kivy.extras.highlight.KivyLexer
 #:import Factory kivy.factory.Factory
 #:set PATH "None"
@@ -52,24 +52,60 @@ VodCutterLayout:
 	id: SplitScreen
 	AnchorLayout:
 		anchor_x: 'center'
-		GridLayout:
-			cols: 1
+		BoxLayout:
+			orientation: 'vertical'
 			BoxLayout:
-				canvas:
-					Color:
-						rgba: 0,1,1,1
-					Rectangle:
-						pos: self.pos
-						size: self.size
+
 				Image:
 					id: FrameDisplay
 					center_x: root.center_x
 			BoxLayout:
+				size_hint_y: None
+				height: '40dp'
+				id: box
+				canvas:
+					Color:
+						rgba: 1,0,1,1
+					Rectangle:
+						pos: self.pos
+						size: self.size
 				Slider:
+					id: mySlide
 					min: 0
 					max: 100
+					size_hint_x: 1.5
 					on_touch_up:
-						SplitScreen.displayFrame(self.value)
+						SplitScreen.displayFrame(self.value, False)
+				TextInput:
+					id: timer
+					text: '0:00'
+					multiline: False
+				Button:
+					text: 'Add Split'
+					on_press:
+						SplitScreen.addSplit()
+			BoxLayout:
+				ScrollView:
+					size_hint: (1,1)
+					bar_width: 4
+					GridLayout:
+						canvas:
+							Color:
+								rgba: .22,.25,.3,1
+							Rectangle:
+								pos: self.pos
+								size: self.size
+						id: output
+						cols: 1
+						size_hint_y: None
+						height: self.minimum_height
+			BoxLayout:
+				height: '40dp'
+				size_hint_y: None
+				Button:
+					text: 'Submit'
+					on_press:
+						SplitScreen.Submit()
 			
 <EnterURL>:
 	id: TextScreen
@@ -89,6 +125,7 @@ VodCutterLayout:
 				TextInput:
 					id: textField
 					multiline: False
+					text: 'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4'
 			BoxLayout:
 				size_hint_y: None
 				height: '48dp'
