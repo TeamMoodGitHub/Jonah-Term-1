@@ -160,7 +160,7 @@ class SplitVod(Screen):
 				command= ['ffmpeg',  '-ss', str(startSec), '-i', self.INPUT_VOD_PATH, '-t', str(endSec-startSec), '-c', 'copy', 'out' + str(count) + '.'+self.ext]
 				count += 1
 				pipe=sp.Popen(command, stdin=sp.PIPE, stderr=sp.PIPE)
-				print('out' + str(count) + '.'+self.ext)
+				print("Done")
 			else:
 				print("Error, invalid time. Enter HH:MM:SS")
 
