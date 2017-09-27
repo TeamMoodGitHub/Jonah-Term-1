@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 import tkinter as tk
 import tkinter.filedialog
+import re
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 kivy.require('1.10.0')
 from kivy.app import App
@@ -39,6 +40,15 @@ class URLButton(Button):
 class URLField(TextInput):
 	pass
 
+class TimeInput(TextInput):
+	pat = re.compile('[^0-9:]')
+#	patFull = re.compile('\b\d{2}[:]?\d{2}[:]?\d{2}\b')
+	def insert_text(self, substring, from_undo=False):
+		pat = self.pat
+		s = re.sub(pat, '', substring)
+		return super(TimeInput, self).insert_text(s, from_undo=from_undo)
+
+
 class VodCutterLayout(BoxLayout):
 	def getFile(self):
 		root.withdraw()
@@ -68,6 +78,7 @@ class SplitVod(Screen):
 	video = None
 	length = None
 	fps = None
+	ext= None
 	lastValue = 0
 	splitCount = 1
 	timeArray = []
@@ -77,14 +88,17 @@ class SplitVod(Screen):
 		if hms == 2:
 			h, m, s = [int(i) for i in t.split(':')]
 			return 3600*h + 60*m + s
-		else:
+		elif hms==1:
 			m, s = [int(i) for i in t.split(':')]
 			return 60*m + s
+		else:
+			return -1
 	
 	def initiateVod(self):
 		self.video = cv2.VideoCapture(self.INPUT_VOD_PATH)
 		self.length = int(self.video.get(cv2.CAP_PROP_FRAME_COUNT))
 		self.fps= self.video.get(cv2.CAP_PROP_FPS)
+		self.ext= self.INPUT_VOD_PATH.split(".")[1]
 		self.addSplit()
 
 
@@ -93,30 +107,40 @@ class SplitVod(Screen):
 		print("********")
 		self.INPUT_VOD_PATH = dirName
 		self.initiateVod()
-		self.displayFrame(0, True)
+		self.displayFrame(0)
 	
 	def displayFirstFrame(self, request, frame):
 		self.INPUT_VOD_PATH = request.file_path
 		self.initiateVod()
-		self.displayFrame(0, True)
+		self.displayFrame(0)
 		
-	def displayFrame(self, frameNum, override):
-		if frameNum != self.lastValue or override:
-			lastValue = frameNum
-			frameNum = self.length*frameNum/100
+	def displayFrameSlide(self, slideVal, override):
+		if slideVal != self.lastValue or override:
+			self.lastValue = slideVal
+			frameNum = self.length*slideVal/100
 			self.setTime(frameNum)
-			if frameNum == self.length:
-				frameNum -= 1
-			self.video.set(1, frameNum)
-			success, frame = self.video.read()
-			frame = np.rot90(np.swapaxes(frame, 0, 1))
-			myTexture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='rgb')
-			myTexture.blit_buffer(frame.tostring(), colorfmt='bgr', bufferfmt='ubyte')
-			self.ids['FrameDisplay'].texture=myTexture
+			self.displayFrame(frameNum)
+	
+	def displayFrame(self, frameNum):
+		if frameNum == self.length:
+			frameNum -= 1
+		self.video.set(1, frameNum)
+		success, frame = self.video.read()
+		frame = np.rot90(np.swapaxes(frame, 0, 1))
+		myTexture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='rgb')
+		myTexture.blit_buffer(frame.tostring(), colorfmt='bgr', bufferfmt='ubyte')
+		self.ids['FrameDisplay'].texture=myTexture
+	
+	def displayFrameFromTime(self,time):
+		frameNum=self.time_to_seconds(time)*self.fps
+		self.displayFrame(frameNum)
+		self.ids['mySlide'].value=frameNum/self.length*100
+		
+	
 	def addSplit(self):
 		lay = BoxLayout(orientation='horizontal', size_hint=(None,None), size=(200,40), pos_hint={'center_x': .5})
-		start = TextInput(multiline=False,text='00:00')
-		end = TextInput(multiline=False,text='00:00')
+		start = TimeInput(multiline=False,text='00:00:00')
+		end = TimeInput(multiline=False,text='00:00:00')
 		lay.add_widget(start)
 		lay.add_widget(end)
 		self.ids['output'].add_widget(lay)
@@ -127,12 +151,18 @@ class SplitVod(Screen):
 	
 	def Submit(self):
 		count = 0
+		print(self.ext)
 		for time in self.timeArray:
+			count = 0
 			startSec = self.time_to_seconds(time[0].text)
 			endSec = self.time_to_seconds(time[1].text)
-			command= ['ffmpeg',  '-ss', str(startSec), '-i', self.INPUT_VOD_PATH, '-t', str(endSec-startSec), '-c', 'copy', 'out' + str(count) + '.flv']
-			count+=1
-			pipe=sp.Popen(command, stdin=sp.PIPE, stderr=sp.PIPE)
+			if startSec != -1 and endSec != -1:
+				command= ['ffmpeg',  '-ss', str(startSec), '-i', self.INPUT_VOD_PATH, '-t', str(endSec-startSec), '-c', 'copy', 'out' + str(count) + '.'+self.ext]
+				count += 1
+				pipe=sp.Popen(command, stdin=sp.PIPE, stderr=sp.PIPE)
+				print('out' + str(count) + '.'+self.ext)
+			else:
+				print("Error, invalid time. Enter HH:MM:SS")
 
 	def setTime(self, frameNum):
 		secs = int(frameNum/self.fps)
@@ -169,10 +199,6 @@ if __name__ == '__main__':
 	blApp = VodCutterApp()
 	blApp.run()
 
-
-My_URL= "https://edge.bf.hitbox.tv/downloads/voddownload.php?path=/static/videos/vods/gcgaming/77f779a9e36721d30f6379d92db40cddd3e948be-593c86ca213a7/gcgaming/6644b20a3987f58c4f50ce63a0bf1a2d.m3u8&s=71788c26f01a0d12bd2b08eec8196169&t=1505066937&username=GcGaming_1335150"
-#My_URL="https://www.smashingmagazine.com/wp-content/uploads/2015/06/10-dithering-opt.jpg"
-FPS = 30
 
 '''
 def TimeToFrames(time):

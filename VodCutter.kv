@@ -75,11 +75,13 @@ VodCutterLayout:
 					max: 100
 					size_hint_x: 1.5
 					on_touch_up:
-						SplitScreen.displayFrame(self.value, False)
-				TextInput:
+						SplitScreen.displayFrameSlide(self.value, False)
+				TimeInput:
 					id: timer
-					text: '0:00'
 					multiline: False
+					text: '0:00:00'
+					on_text_validate:
+						SplitScreen.displayFrameFromTime(self.text)
 				Button:
 					text: 'Add Split'
 					on_press:
