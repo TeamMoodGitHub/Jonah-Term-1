@@ -1,5 +1,6 @@
 import requests
 import kivy
+import os
 import shutil
 import cv2
 import numpy as np
@@ -67,8 +68,11 @@ class VodCutterApp(App):
 		screen_manager.add_widget(GetVod(name="Get_Vod"))
 		screen_manager.add_widget(SplitVod(name="Split_Vod"))
 		screen_manager.add_widget(EnterURL(name="Enter_URL"))
+		screen_manager.add_widget(YtUpload(name="Yt_Upload"))
 		return screen_manager
-		
+
+class YtUpload(Screen):
+	pass
 		
 class GetVod(Screen):
 	pass
@@ -156,13 +160,25 @@ class SplitVod(Screen):
 			count = 0
 			startSec = self.time_to_seconds(time[0].text)
 			endSec = self.time_to_seconds(time[1].text)
-			if startSec != -1 and endSec != -1:
-				command= ['ffmpeg',  '-ss', str(startSec), '-i', self.INPUT_VOD_PATH, '-t', str(endSec-startSec), '-c', 'copy', 'out' + str(count) + '.'+self.ext]
+			if startSec <= endSec{
+				if startSec != -1 and endSec != -1:
+					command= ['ffmpeg',  '-ss', str(startSec), '-i', self.INPUT_VOD_PATH, '-t', str(endSec-startSec), '-c', 'copy', 'out' + str(count) + '.'+self.ext]
+				
+				try:
+					os.remove('out'+ str(count) + '.'+self.ext)
+					break
+				except FileNotFoundError:
+					pass
 				count += 1
 				pipe=sp.Popen(command, stdin=sp.PIPE, stderr=sp.PIPE)
+				'''command = 'youtube-upload', '--title=/"Testvid/"','smashvid.flv'
+				pipe=sp.call(command,cwd="F:\\Work\\CvTest\\Jonah-Term-1\\youtube-upload-master\\bin", shell=True)
+				'''
 				print("Done")
 			else:
 				print("Error, invalid time. Enter HH:MM:SS")
+			}
+
 
 	def setTime(self, frameNum):
 		secs = int(frameNum/self.fps)

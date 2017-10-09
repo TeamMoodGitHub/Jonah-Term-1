@@ -44,6 +44,23 @@ VodCutterLayout:
 			MenuButton:
 				text: "Open VOD from File"
 				on_press: VodCutter.getFile()
+
+<YtUpload>:
+	BoxLayout:
+		ScrollView:
+			size_hint: (1,1)
+			bar_width: 4
+			GridLayout:
+				canvas:
+					Color:
+						rgba: .22,.25,.3,1
+					Rectangle:
+						pos: self.pos
+						size: self.size
+				id: output
+				cols: 1
+				size_hint_y: None
+				height: self.minimum_height
 				
 <GetVod>:
 	VodCutterLayout:
